@@ -172,7 +172,7 @@ def train_main(args):
                                  early_stop=False,
                                  metrics=metrics)
 
-    warmup_epochs = 20
+    warmup_epochs = 10
     if args['lr_schedule']:
         total_train_steps = args['epochs'] * train_steps
         warmup_steps = warmup_epochs * train_steps
