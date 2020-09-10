@@ -11,6 +11,7 @@ TF-Keras implementation of PHIQnet as described in [Perceptual Hierarchical Netw
 Many examples of training PHIQnet and its variants can be seen in image_quality/bin.
 Argparser should be used, but the authors prefer to use disctionary with parameters being defined. It is easy to convert to take arguments.
 In principle, the following parameters can be defined:
+
     args = {}
     args['multi_gpu'] = 0 # gpu setting, set to 1 for using multiple GPUs
     args['gpu'] = 0  # If having multiple GPUs, specify which GPU to use
