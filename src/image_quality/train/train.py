@@ -96,14 +96,28 @@ def train_main(args):
         model_name += '_no_imageaug'
 
     # Create PHIQnet model
-    model = phiq_net(n_quality_levels=args['n_quality_levels'],
-                     naive_backbone=args['naive_backbone'],
-                     backbone=args['backbone'],
-                     fpn_type=args['fpn_type'],
-                     attention_module=args['attention_module'])
-
+    optimizer = Adam(args['lr_base'])
     if args['multi_gpu'] > 0:
-        model = multi_gpu_model(model, args['multi_gpu'])
+        strategy = tf.distribute.MirroredStrategy(cross_device_ops=tf.distribute.HierarchicalCopyAllReduce())
+        print('Number of devices: {}'.format(strategy.num_replicas_in_sync))
+
+        with strategy.scope():
+            # Everything that creates variables should be under the strategy scope.
+            # In general this is only model construction & `compile()`.
+            model = phiq_net(n_quality_levels=args['n_quality_levels'],
+                             naive_backbone=args['naive_backbone'],
+                             backbone=args['backbone'],
+                             fpn_type=args['fpn_type'],
+                             attention_module=args['attention_module'])
+            model.compile(loss=loss, optimizer=optimizer, metrics=[metrics])
+
+    else:
+        model = phiq_net(n_quality_levels=args['n_quality_levels'],
+                         naive_backbone=args['naive_backbone'],
+                         backbone=args['backbone'],
+                         fpn_type=args['fpn_type'],
+                         attention_module=args['attention_module'])
+        model.compile(loss=loss, optimizer=optimizer, metrics=[metrics])
 
     # Load Imagenet pretrained weights or existing weights for fine-tune
     if args['weights'] is not None:
@@ -184,9 +198,7 @@ def train_main(args):
                                                verbose=1)
         callbacks.append(warmup_lr)
 
-    # Define optimizer and train
-    optimizer = Adam(args['lr_base'])
-    model.compile(loss=loss, optimizer=optimizer, metrics=[metrics])
+    # Train
     model_history = model.fit(x=train_generator,
                               epochs=args['epochs'],
                               steps_per_epoch=train_steps,
