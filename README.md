@@ -72,7 +72,7 @@ This work uses two publicly available databases: KonIQ-10k [KonIQ-10k: An ecolog
  and LIVE-wild [Massive online crowdsourced study of subjective and objective picture quality](https://ieeexplore.ieee.org/document/7327186) by D. Ghadiyaram, and A.C. Bovik
 
 1) The two databases were merged, and then split to training and testing sets. Please see README in image_quality/databases for details.
-2) Make MOS files:
+2) Make MOS files (note: do NOT include head line):
 
     For database with score distribution available, the MOS file is like this (koniq format):
     ```
