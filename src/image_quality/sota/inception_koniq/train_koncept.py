@@ -10,7 +10,7 @@ from image_quality.misc.imageset_handler import get_image_scores, get_image_scor
 from image_quality.train.group_generator import GroupGenerator
 from image_quality.train.plot_train import plot_history
 from callbacks.warmup_cosine_decay_scheduler import WarmUpCosineDecayScheduler
-from callbacks.evaluation_callback import ModelEvaluationIQ
+from callbacks.evaluation_callback_generator import ModelEvaluationIQGenerator
 from image_quality.model_evaluation.evaluation import ModelEvaluation
 
 
@@ -48,14 +48,7 @@ def train_main(result_folder, model_name):
                                     imagenet_pretrain=True)
     test_steps = test_generator.__len__()
 
-    test_image_files = []
-    test_scores = []
-    for test_image_file_group, test_score_group in zip(test_image_file_groups, test_score_groups):
-        test_image_files.extend(test_image_file_group)
-        test_scores.extend(test_score_group)
-
-    evaluation_callback = ModelEvaluationIQ(test_image_files, test_scores, True,
-                                            imagenet_pretrain=True)
+    evaluation_callback = ModelEvaluationIQGenerator(test_generator, True, imagenet_pretrain=True)
     callbacks = create_callbacks(model_name, result_folder, other_callback=evaluation_callback, checkpoint=True,
                                  early_stop=False, metrics=metrics)
     total_train_steps = epochs * train_steps

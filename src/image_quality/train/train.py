@@ -8,7 +8,7 @@ from callbacks.callbacks import create_callbacks
 from image_quality.train.plot_train import plot_history
 from image_quality.misc.imageset_handler import get_image_scores, get_image_score_from_groups
 from image_quality.train.group_generator import GroupGenerator
-from callbacks.evaluation_callback import ModelEvaluationIQ
+from callbacks.evaluation_callback_generator import ModelEvaluationIQGenerator
 from callbacks.warmup_cosine_decay_scheduler import WarmUpCosineDecayScheduler
 
 
@@ -158,17 +158,17 @@ def train_main(args):
                                               imagenet_pretrain=imagenet_pretrain)
         validation_steps = validation_generator.__len__()
 
-        test_image_files = []
-        test_scores = []
-        for test_image_file_group, test_score_group in zip(test_image_file_groups, test_score_groups):
-            test_image_files.extend(test_image_file_group)
-            test_scores.extend(test_score_group)
+        # evaluation_generator = GroupGenerator(test_image_file_groups,
+        #                                       test_score_groups,
+        #                                       batch_size=1,
+        #                                       image_aug=False,
+        #                                       imagenet_pretrain=imagenet_pretrain)
+        evaluation_generator = None
 
-        evaluation_callback = ModelEvaluationIQ(test_image_files,
-                                                test_scores,
-                                                using_single_mos,
-                                                imagenet_pretrain=imagenet_pretrain)
-
+        evaluation_callback = ModelEvaluationIQGenerator(validation_generator,
+                                                         using_single_mos,
+                                                         evaluation_generator=evaluation_generator,
+                                                         imagenet_pretrain=imagenet_pretrain)
     else:
         evaluation_callback = None
         validation_generator = None
