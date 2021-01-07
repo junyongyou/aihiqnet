@@ -58,7 +58,7 @@ After PHIQnet has been trained, and the weights have been stored in h5 file, it 
     args['naive_backbone'] = False
     args['backbone'] = 'resnet50'
     args['fpn_type'] = 'fpn'
-    args['weights'] = 'xxxx.h5'
+    args['weights'] = 'phiqnet.h5'
     model = phiq_net(n_quality_levels=args['n_quality_levels'],
                      naive_backbone=args['naive_backbone'],
                      backbone=args['backbone'],
@@ -66,6 +66,8 @@ After PHIQnet has been trained, and the weights have been stored in h5 file, it 
     model.load_weights(args['weights'])
 ```
 And then use ModelEvaluation to predict quality of imageset.
+
+PHIQnet has been trained on KonIQ-10k and LIVE-wild databases, and the weights file can be downloaded [here](https://drive.google.com/file/d/1ymy2oL0r-XNzjqk_kE-lcNkI2FhSu95h/view?usp=sharing).
 
 ## Prepare datasets for model training
 This work uses two publicly available databases: KonIQ-10k [KonIQ-10k: An ecologically valid database for deep learning of blind image quality assessment](https://ieeexplore.ieee.org/document/8968750) by V. Hosu, H. Lin, T. Sziranyi, and D. Saupe;
