@@ -102,11 +102,18 @@ This work uses two publicly available databases: KonIQ-10k [KonIQ-10k: An ecolog
 Other three metrics are also included in the repo. The original implementations of metrics are employed, if findable online. However, these metrics are less commented.
  In addition, the pathes to training, testing sets, pretrained weights, and saliency map folder should also be revised accordingly.
 
+deepIQA [Deep Neural Networks for No-Reference and Full-Reference Image Quality Assessment](https://github.com/dmaniry/deepIQA)
+
+DeepBIQ [On the Use of Deep Learning for Blind Image QualityAssessment](https://arxiv.org/pdf/1602.05531.pdf)
+
 Koncept512 [KonIQ-10k: An ecologically valid database for deep learning of blind image quality assessment](https://github.com/subpic/koniq)
 
 SGDNet [SGDNet: An end-to-end saliency-guided deep neural network for no-reference image quality assessment](https://github.com/ysyscool/SGDNet)
 
 CaHDC [End-to-end blind image quality prediction with cascaded deep neural network](https://web.xidian.edu.cn/wjj/files/20190620_152557.zip)
 
-## FAQ
+## Report bugs
+Please check the paths of image, weights, etc. first if encountering any problems. Please report any bugs in Issues. 
+
+## FAQs
 * To be added
