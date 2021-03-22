@@ -6,7 +6,7 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 from PIL import Image
 from scipy.ndimage import sobel
-import shutil
+from pickle import load
 import glob
 import scipy.stats
 import matplotlib.pyplot as plt
@@ -99,6 +99,17 @@ def get_si(folders):
     return si
 
 
+def get_si_images(image_files):
+    si = []
+    for image_file in image_files:
+        file_name = image_file.lower()
+        if file_name.endswith(('.jpg', '.bmp', '.png')):
+            image = np.asarray(Image.open(image_file), dtype=np.float32)
+            si.append(si_image(image))
+            print('{} done'.format(image_file))
+    return si
+
+
 def draw_train_val_si_hist():
     """
     Draw the histogram of SI of train and validation sets
@@ -113,10 +124,12 @@ def draw_train_val_si_hist():
     val_folders = [r'..\databases\val\koniq_normal',
                    r'..\databases\val\live']
 
-    train_si = get_si(train_folders)
-    val_si = get_si(val_folders)
-    np.save(r'..\databases\train_si.npy', train_si)
-    np.save(r'..\databases\val_si.npy', val_si)
+    # train_si = get_si(train_folders)
+    # val_si = get_si(val_folders)
+    # np.save(r'..\databases\train_si.npy', train_si)
+    # np.save(r'..\databases\val_si.npy', val_si)
+    train_si = np.load(r'..\databases\train_si.npy')
+    val_si = np.load(r'..\databases\val_si.npy')
     max_si = np.max(train_si)
     min_si = np.min(train_si)
 
@@ -143,6 +156,41 @@ def draw_train_val_si_hist():
     # plt.show()
 
 
+def draw_train_val_si_hist_spaq():
+    """
+    Draw the histogram of SI of train and validation sets
+    :return:
+    """
+    train_images_scores, test_images_scores = load(open(r'..\databases\spaq\train_test_mos.pkl', 'rb'))
+
+    train_image_files = []
+    test_image_files = []
+    for train_images_score in train_images_scores:
+        train_image_files.append(train_images_score.split(',')[0])
+    for test_image_file in test_images_scores:
+        test_image_files.append(test_image_file.split(',')[0])
+
+    train_si = get_si_images(train_image_files)
+    val_si = get_si_images(test_image_files)
+    # val_si = get_si(val_folders)
+    np.save(r'..\databases\train_si_spaq.npy', train_si)
+    np.save(r'..\databases\val_si_spaq.npy', val_si)
+    # train_si = np.load(r'..\databases\train_si.npy')
+    # val_si = np.load(r'..\databases\val_si.npy')
+    # max_si = np.max(train_si)
+    # min_si = np.min(train_si)
+    #
+    # plt.figure()
+    # bins = np.linspace(min_si, max_si, 100)
+    # # bins = 100
+    # plt.hist(train_si, bins=bins, alpha=0.5, rwidth=0.95, color='skyblue', label='Train set')
+    # plt.xlim(min_si, max_si)
+    # plt.hist(val_si, bins=bins, alpha=1., rwidth=0.95, label='Validation set')
+    # plt.legend(loc='upper right')
+    # # plt.ylabel('Density')
+    # plt.xlabel('SI', fontsize=14)
+    # plt.show()
+
 def draw_train_val_mos_hist():
     """
     Draw the histogram of MOS in the train and val sets
@@ -156,7 +204,7 @@ def draw_train_val_mos_hist():
                    r'..\databases\val\live']
 
     koniq_mos_file = r'..\databases\koniq10k_images_scores.csv'
-    live_mos_file = r'..\databases\live_mos.csv'
+    live_mos_file = r'..\databases\live_wild\live_mos.csv'
     image_scores = get_image_scores(koniq_mos_file, live_mos_file)
     train_scores = get_scores(train_folders, image_scores)
     val_scores = get_scores(val_folders, image_scores)
@@ -173,6 +221,47 @@ def draw_train_val_mos_hist():
 
     train_si = np.load(r'..\databases\train_si.npy')
     val_si = np.load(r'..\databases\val_si.npy')
+    max_si = np.max(train_si)
+    min_si = np.min(train_si)
+
+    plt.subplot(212)
+    bins = np.linspace(min_si, max_si, 100)
+    # bins = 100
+    plt.hist(train_si, bins=bins, alpha=0.5, rwidth=0.95, color='skyblue', label='Training set')
+    plt.xlim(min_si, max_si)
+    plt.hist(val_si, bins=bins, alpha=1., rwidth=0.95, label='Testing set')
+    plt.legend(loc='upper right')
+    # plt.ylabel('Density')
+    plt.xlabel('SI', fontsize=14)
+
+    plt.show()
+
+def draw_train_val_mos_hist_spaq():
+    """
+    Draw the histogram of MOS in the train and val sets
+    :return:
+    """
+    train_images_scores, test_images_scores = load(open(r'..\databases\spaq\train_test_mos.pkl', 'rb'))
+
+    train_scores = []
+    val_scores = []
+    for train_images_score in train_images_scores:
+        train_scores.append(float(train_images_score.split(',')[1]))
+    for test_images_score in test_images_scores:
+        val_scores.append(float(test_images_score.split(',')[1]))
+
+    plt.figure()
+    plt.subplot(211)
+    bins = np.linspace(1, 5, 100)
+    plt.hist(train_scores, bins=bins, alpha=0.5, rwidth=0.95, color='skyblue', label='Training set')
+    plt.xlim(1, 5)
+    plt.hist(val_scores, bins=bins, alpha=1., rwidth=0.95, label='Testing set')
+    plt.legend(loc='upper left')
+    # plt.ylabel('Density')
+    plt.xlabel('MOS', fontsize=14)
+
+    train_si = np.load(r'..\databases\train_si_spaq.npy')
+    val_si = np.load(r'..\databases\val_si_spaq.npy')
     max_si = np.max(train_si)
     min_si = np.min(train_si)
 
@@ -207,7 +296,7 @@ def get_image_scores_from_two_file_formats(mos_file, file_format, mos_format, us
             image_file = content[0].replace('"', '').lower()
 
             if using_single_mos:
-                score = float(content[-1]) if mos_format == 'mos' else float(content[1]) / 25. + 1
+                score = float(content[-1]) if mos_format == 'mos' else float(content[-1]) / 25. + 1
             else:
                 if file_format == 'koniq':
                     scores_softmax = np.array([float(score) for score in content[1 : 6]])
@@ -219,6 +308,53 @@ def get_image_scores_from_two_file_formats(mos_file, file_format, mos_format, us
 
             image_files[image_file] = score
     return image_files
+
+
+def get_folder_from_name(image_file):
+    if '_I_' in image_file:
+        folder_1 = 'IS1'
+    if '_II_' in image_file:
+        folder_1 = 'IS2'
+    if '_III_' in image_file:
+        folder_1 = 'IS3'
+    if '_IV_' in image_file:
+        folder_1 = 'IS4'
+    if '_V_' in image_file:
+        folder_1 = 'IS5'
+    if '_VI_' in image_file:
+        folder_1 = 'IS6'
+    if '_C01_' in image_file:
+        folder_2 = 'co1'
+    if '_C02_' in image_file:
+        folder_2 = 'co2'
+    if '_C03_' in image_file:
+        folder_2 = 'co3'
+    if '_C04_' in image_file:
+        folder_2 = 'co4'
+    if '_C05_' in image_file:
+        folder_2 = 'co5'
+    if '_C06_' in image_file:
+        folder_2 = 'co6'
+    if '_C07_' in image_file:
+        folder_2 = 'co7'
+    if '_C08_' in image_file:
+        folder_2 = 'co8'
+    return folder_1, folder_2
+
+def get_image_scores_cid2013(image_folder, mos_file):
+    image_files = []
+    image_scores = []
+    with open(mos_file, 'r+') as f:
+        lines = f.readlines()
+        for line in lines:
+            content = line.strip().split()
+            folder_1, folder_2 = get_folder_from_name(content[0])
+            image_file = os.path.join(image_folder[0], folder_1, folder_2, content[0] + '.jpg')
+            score = float(content[3]) / 25. + 1
+            image_files.append(image_file)
+            image_scores.append(score)
+
+    return image_files, image_scores
 
 
 def get_image_scores(koniq_mos_file, live_mos_file, using_single_mos=True):
@@ -276,8 +412,8 @@ def get_distribution(score_scale, mean, std, distribution_type='standard'):
 
 
 def get_live_images():
-    image_folder = r'..\databases\Images'
-    image_mos_file = r'..\databases\live_mos.csv'
+    image_folder = r'..\databases\live_wild\Images'
+    image_mos_file = r'..\databases\live_wild\live_mos.csv'
     # image_si = []
     # scores = []
     image_files = {}
@@ -386,8 +522,8 @@ class GroupProvider:
         return train_image_files, test_image_files, train_scores, test_scores
 
     def get_live_images(self):
-        image_folder = r'..\databases\Images'
-        image_mos_file = r'..\databases\live_mos.csv'
+        image_folder = r'..\databases\live_wild\Images'
+        image_mos_file = r'..\databases\live_wild\live_mos.csv'
         # image_si = []
         # scores = []
         image_files = {}
@@ -454,6 +590,86 @@ class GroupProvider:
             resized_image.save(os.path.join(target_folder, basename))
 
 
+def draw_train_val_mos_hist_all():
+    """
+    Draw the histogram of MOS in the train and val sets
+    :return:
+    """
+    train_folders = [r'..\databases\train\koniq_normal',
+                     # r'..\databases\train\koniq_small',
+                     r'..\databases\train\live']
+    val_folders = [r'..\databases\val\koniq_normal',
+                   # r'..\databases\val\koniq_small',
+                   r'..\databases\val\live']
+
+    koniq_mos_file = r'..\databases\koniq10k_images_scores.csv'
+    live_mos_file = r'..\databases\live_wild\live_mos.csv'
+    image_scores = get_image_scores(koniq_mos_file, live_mos_file)
+    train_scores = get_scores(train_folders, image_scores)
+    val_scores = get_scores(val_folders, image_scores)
+
+    plt.figure()
+    plt.subplot(221)
+    bins = np.linspace(1, 5, 100)
+    plt.hist(train_scores, bins=bins, alpha=0.5, rwidth=0.95, color='skyblue', label='Training set')
+    plt.xlim(1, 5)
+    plt.hist(val_scores, bins=bins, alpha=1., rwidth=0.95, label='Testing set')
+    plt.legend(loc='upper left')
+    # plt.ylabel('Density')
+    plt.xlabel('MOS (Combined database)', fontsize=14)
+
+    train_si = np.load(r'..\databases\train_si.npy')
+    val_si = np.load(r'..\databases\val_si.npy')
+    max_si = np.max(train_si)
+    min_si = np.min(train_si)
+
+    plt.subplot(223)
+    bins = np.linspace(min_si, max_si, 100)
+    # bins = 100
+    plt.hist(train_si, bins=bins, alpha=0.5, rwidth=0.95, color='skyblue', label='Training set')
+    plt.xlim(min_si, max_si)
+    plt.hist(val_si, bins=bins, alpha=1., rwidth=0.95, label='Testing set')
+    plt.legend(loc='upper right')
+    # plt.ylabel('Density')
+    plt.xlabel('SI (Combined database)', fontsize=14)
+
+
+    train_images_scores, test_images_scores = load(open(r'..\databases\spaq\train_test_mos.pkl', 'rb'))
+
+    train_scores = []
+    val_scores = []
+    for train_images_score in train_images_scores:
+        train_scores.append(float(train_images_score.split(',')[1]))
+    for test_images_score in test_images_scores:
+        val_scores.append(float(test_images_score.split(',')[1]))
+
+    # plt.figure()
+    plt.subplot(222)
+    bins = np.linspace(1, 5, 100)
+    plt.hist(train_scores, bins=bins, alpha=0.5, rwidth=0.95, color='skyblue', label='Training set')
+    plt.xlim(1, 5)
+    plt.hist(val_scores, bins=bins, alpha=1., rwidth=0.95, label='Testing set')
+    plt.legend(loc='upper left')
+    # plt.ylabel('Density')
+    plt.xlabel('MOS (SPAQ)', fontsize=14)
+
+    train_si = np.load(r'..\databases\train_si_spaq.npy')
+    val_si = np.load(r'..\databases\val_si_spaq.npy')
+    max_si = np.max(train_si)
+    min_si = np.min(train_si)
+
+    plt.subplot(224)
+    bins = np.linspace(min_si, max_si, 100)
+    # bins = 100
+    plt.hist(train_si, bins=bins, alpha=0.5, rwidth=0.95, color='skyblue', label='Training set')
+    plt.xlim(min_si, max_si)
+    plt.hist(val_si, bins=bins, alpha=1., rwidth=0.95, label='Testing set')
+    plt.legend(loc='upper right')
+    # plt.ylabel('Density')
+    plt.xlabel('SI (SPAQ)', fontsize=14)
+
+    plt.show()
+
 if __name__ == '__main__':
     # image_folder = r'..\databases\1024x768'
     # image_mos_file = r'..\databases\koniq10k_images_scores.csv'
@@ -463,8 +679,11 @@ if __name__ == '__main__':
     # print(1e-4/2)
 
     # draw_train_val_si_hist()
-    draw_train_val_mos_hist()
+    # draw_train_val_mos_hist()
     # get_distribution()
+
+    # draw_train_val_si_hist_spaq()
+    draw_train_val_mos_hist_all()
 
     # get_image_means()
 

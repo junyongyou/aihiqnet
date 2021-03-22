@@ -46,6 +46,8 @@ def channel_spatial_attention(input_feature, n_quality_levels, name, return_feat
                              use_bias=False)(spatial_weights)
 
     outputs = multiply([multiply([input_feature, channel_weights]), spatial_weights])
+    # outputs = multiply([input_feature, spatial_weights])
+    # outputs = multiply([input_feature, channel_weights])
 
     if return_feature_map:
         return outputs

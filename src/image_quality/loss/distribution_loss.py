@@ -3,7 +3,15 @@ Two loss functions that might be used in PHIQnet.
 """
 from tensorflow.keras import backend as K
 import numpy as np
+from tensorflow.keras.losses import kullback_leibler_divergence
 from tensorflow.keras.losses import categorical_crossentropy
+
+
+def earth_mover_loss(y_true, y_pred):
+    cdf_true = K.cumsum(y_true, axis=-1)
+    cdf_pred = K.cumsum(y_pred, axis=-1)
+    emd = K.sqrt(K.mean(K.square(cdf_true - cdf_pred), axis=-1))
+    return K.mean(emd)
 
 
 def distribution_loss(y_true, y_pred):

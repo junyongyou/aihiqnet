@@ -12,7 +12,9 @@ from backbone.resnet50 import ResNet50
 from backbone.resnet_family import ResNet18
 from backbone.resnet_feature_maps import ResNet152v2, ResNet152
 from backbone.vgg16 import VGG16
+from backbone.densenet import DenseNet121
 from tensorflow.keras.applications.inception_resnet_v2 import InceptionResNetV2
+import tensorflow as tf
 
 
 def phiq_net(n_quality_levels, input_shape=(None, None, 3), naive_backbone=False, backbone='resnet50', fpn_type='fpn',
@@ -66,6 +68,8 @@ def phiq_net(n_quality_levels, input_shape=(None, None, 3), naive_backbone=False
         backbone_model = ResNet152(inputs)
     elif backbone == 'vgg16':
         backbone_model = VGG16(inputs)
+    elif backbone == 'densnet121':
+        backbone_model = DenseNet121(inputs, return_feature_maps=return_feature_maps)
     else:
         raise NotImplementedError
 
@@ -106,8 +110,12 @@ def phiq_net(n_quality_levels, input_shape=(None, None, 3), naive_backbone=False
 
 
 if __name__ == '__main__':
-    input_shape = [None, None, 3]
-    # input_shape = [768, 1024, 3]
+    gpus = tf.config.experimental.list_physical_devices('GPU')
+    tf.config.experimental.set_visible_devices(gpus[0], 'GPU')
+    # input_shape = [None, None, 3]
+    input_shape = [768, 1024, 3]
+    # input_shape = [500, 500, 3]
     # model = phiq_net(n_quality_levels=5, input_shape=input_shape, backbone='resnet152v2')
-    # model = phiq_net(n_quality_levels=5, input_shape=input_shape, backbone='resnet50')
-    model = phiq_net(n_quality_levels=5, input_shape=input_shape, backbone='vgg16')
+    model = phiq_net(n_quality_levels=5, input_shape=input_shape, backbone='resnet50')
+    # model = phiq_net(n_quality_levels=5, input_shape=input_shape, backbone='vgg16')
+    # model = adiq_net(n_quality_levels=5, input_shape=input_shape, backbone='resnet18', attention_module=True)

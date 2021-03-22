@@ -27,7 +27,7 @@ def val_main(args):
     else:
         imagenet_pretrain = False
 
-    val_folders = [r'F:\SPAG_image_quality_dataset\TestImage']
+    val_folders = [r'..database\SPAG_image_quality_dataset\TestImage']
     spag_mos_file = r'..\databases\spag\image_mos.csv'
     image_scores = get_image_scores(spag_mos_file)
     test_image_file_groups, test_score_groups = get_image_score_from_groups(val_folders, image_scores)
