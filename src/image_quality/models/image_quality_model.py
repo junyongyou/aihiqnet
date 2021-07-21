@@ -1,9 +1,7 @@
 """
 Main function to build PHIQnet.
 """
-from image_quality.layers.fpn import build_fpn, build_non_fpn
-from image_quality.layers.bi_fpn import build_bifpn
-from image_quality.layers.pan import build_pan
+from image_quality.layers.fusion import fusion_layer, no_fusion
 from backbone.ResNest import ResNest
 from tensorflow.keras.layers import Input, Dense, Average, GlobalAveragePooling2D, Concatenate
 from tensorflow.keras.models import Model
@@ -17,7 +15,7 @@ from tensorflow.keras.applications.inception_resnet_v2 import InceptionResNetV2
 import tensorflow as tf
 
 
-def phiq_net(n_quality_levels, input_shape=(None, None, 3), naive_backbone=False, backbone='resnet50', fpn_type='fpn',
+def phiq_net(n_quality_levels, input_shape=(None, None, 3), naive_backbone=False, backbone='resnet50', feature_fusion=True,
              attention_module=True):
     """
     Build PHIQnet
@@ -25,7 +23,7 @@ def phiq_net(n_quality_levels, input_shape=(None, None, 3), naive_backbone=False
     :param input_shape: image input shape, keep as unspecifized
     :param naive_backbone: flag to use backbone only, i.e., without neck and head, if set to True
     :param backbone: backbone networks (resnet50/18/152v2, resnest, vgg16, etc.)
-    :param fpn_type: chosen from 'fpn', 'bi-fpn' or 'pan'
+    :param feature_fusion: flag to use or not feature fusion
     :param attention_module: flag to use or not attention module
     :return: PHIQnet model
     """
@@ -79,17 +77,10 @@ def phiq_net(n_quality_levels, input_shape=(None, None, 3), naive_backbone=False
 
     C2, C3, C4, C5 = backbone_model.outputs
     pyramid_feature_size = 256
-    if fpn_type == 'fpn':
-        fpn_features = build_fpn(C2, C3, C4, C5, feature_size=pyramid_feature_size)
-    elif fpn_type == 'pan':
-        fpn_features = build_pan(C2, C3, C4, C5, feature_size=pyramid_feature_size)
-    elif fpn_type == 'bifpn':
-        for i in range(3):
-            if i == 0:
-                fpn_features = [C3, C4, C5]
-            fpn_features = build_bifpn(fpn_features, pyramid_feature_size, i)
+    if feature_fusion:
+        fpn_features = fusion_layer(C2, C3, C4, C5, feature_size=pyramid_feature_size)
     else:
-        fpn_features = build_non_fpn(C2, C3, C4, C5, feature_size=pyramid_feature_size)
+        fpn_features = no_fusion(C2, C3, C4, C5, feature_size=pyramid_feature_size)
 
     PF = []
     for i, P in enumerate(fpn_features):
@@ -97,12 +88,12 @@ def phiq_net(n_quality_levels, input_shape=(None, None, 3), naive_backbone=False
             PF.append(channel_spatial_attention(P, n_quality_levels, 'P{}'.format(i)))
         else:
             outputs = GlobalAveragePooling2D(name='avg_pool_{}'.format(i))(P)
-            outputs = Dense(n_quality_levels, activation='softmax', name='fc_prediction_{}'.format(i))(outputs)
+            if n_quality_levels > 1:
+                outputs = Dense(n_quality_levels, activation='softmax', name='fc_prediction_{}'.format(i))(outputs)
+            else:
+                outputs = Dense(n_quality_levels, activation='linear', name='fc_prediction_{}'.format(i))(outputs)
             PF.append(outputs)
     outputs = Average(name='PF_average')(PF)
-
-    # pyramids = Concatenate(axis=1)(PF)
-    # outputs = Dense(1, activation='linear', name='final_fc', use_bias=True)(pyramids)
 
     model = Model(inputs=inputs, outputs=outputs)
     model.summary()

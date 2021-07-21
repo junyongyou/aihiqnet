@@ -59,6 +59,6 @@ def channel_spatial_attention(input_feature, n_quality_levels, name, return_feat
     if n_quality_levels > 1:
         outputs = Dense(n_quality_levels, activation='softmax', name=name + '_fc_prediction')(outputs)
     else:
-        outputs = Dense(n_quality_levels, activation='linear', name=name + 'fc_prediction')(outputs)
+        outputs = Dense(n_quality_levels, activation='linear', name=name + '_fc_prediction')(outputs)
 
     return outputs

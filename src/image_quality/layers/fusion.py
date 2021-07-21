@@ -5,7 +5,7 @@ from tensorflow.keras.layers import Conv2D, Add
 from image_quality.layers.upsample import Upsample
 
 
-def build_fpn(C2, C3, C4, C5, feature_size=256, name='fpn_'):
+def fusion_layer(C2, C3, C4, C5, feature_size=256, name='fpn_'):
     """
     Create the FPN layers on top of the backbone features
     :param C2: Feature stage C2 from the backbone
@@ -44,7 +44,7 @@ def build_fpn(C2, C3, C4, C5, feature_size=256, name='fpn_'):
     return [P2, P3, P4, P5, P6]
 
 
-def build_non_fpn(C2, C3, C4, C5, feature_size=256):
+def no_fusion(C2, C3, C4, C5, feature_size=256):
     """
     If no FPS is used, then use a bottle-neck layer to change the channel dimension to 256
     :param C2: Feature stage C2 from the backbone

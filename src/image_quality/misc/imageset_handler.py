@@ -670,6 +670,77 @@ def draw_train_val_mos_hist_all():
 
     plt.show()
 
+
+def split_dataset():
+    from pickle import dump
+    with open(r'C:\fish_lice_dataset\image_quality_koniq10k\spaq\train_val_test.pkl', 'rb') as f:
+        train_val = load(f)
+    train_list = []
+    val_list = []
+    test_list = []
+
+    for image_score in train_val[0]:
+        content = image_score.split(',')
+        file = os.path.basename(content[0])
+        train_list.append('{},{}'.format(file, content[1]))
+    for image_score in train_val[1]:
+        content = image_score.split(',')
+        file = os.path.basename(content[0])
+        val_list.append('{},{}'.format(file, content[1]))
+    for image_score in train_val[2]:
+        content = image_score.split(',')
+        file = os.path.basename(content[0])
+        test_list.append('{},{}'.format(file, content[1]))
+    with open( r'C:\fish_lice_dataset\image_quality_koniq10k\spaq\train_val_test_new.pkl', 'wb') as f:
+        dump([train_list, val_list, test_list], f)
+
+    t = 0
+
+
+def koniq_split():
+    from pickle import dump
+    train_folder = r'C:\fish_lice_dataset\image_quality_koniq10k\train\koniq_normal'
+    val_folder = r'C:\fish_lice_dataset\image_quality_koniq10k\val\koniq_normal'
+
+    train_files = glob.glob(os.path.join(train_folder, '*.jpg'))
+    val_files = glob.glob(os.path.join(val_folder, '*.jpg'))
+
+    train_images_scores = []
+    val_images_scores = []
+    test_images_scores = []
+    mos_file = r'C:\fish_lice_dataset\image_quality_koniq10k\koniq10k_images_scores.csv'
+    image_score_dict = dict()
+    with open(mos_file, 'r+') as f:
+        lines = f.readlines()
+        for line in lines:
+            content = line.strip().split(',')
+            image_score_dict.update({content[0]: line.replace('{},'.format(content[0]), '').strip()})
+
+    for i, train_image in enumerate(train_files):
+        filename = os.path.basename(train_image)
+        if i % 17 == 0:
+            if i % 2 == 0:
+                val_images_scores.append('{},{}'.format(filename, image_score_dict[filename]))
+            else:
+                test_images_scores.append('{},{}'.format(filename, image_score_dict[filename]))
+        else:
+            train_images_scores.append('{},{}'.format(filename, image_score_dict[filename]))
+
+    for i, train_image in enumerate(val_files):
+        filename = os.path.basename(train_image)
+        if i % 2 == 0:
+            val_images_scores.append('{},{}'.format(filename, image_score_dict[filename]))
+        else:
+            test_images_scores.append('{},{}'.format(filename, image_score_dict[filename]))
+
+    with open(r'C:\NORCE projects\phiqnet\src\image_quality\databases\train_val_test_koniq.pkl', 'wb') as f:
+        dump([train_images_scores, val_images_scores, test_images_scores], f)
+    t = 0
+
+
+
+    t = 0
+
 if __name__ == '__main__':
     # image_folder = r'..\databases\1024x768'
     # image_mos_file = r'..\databases\koniq10k_images_scores.csv'
@@ -683,8 +754,10 @@ if __name__ == '__main__':
     # get_distribution()
 
     # draw_train_val_si_hist_spaq()
-    draw_train_val_mos_hist_all()
+    # draw_train_val_mos_hist_all()
 
+    # split_dataset()
+    koniq_split()
     # get_image_means()
 
     # v = [4,5]

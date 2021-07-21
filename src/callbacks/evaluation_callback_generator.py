@@ -7,12 +7,11 @@ class ModelEvaluationIQGenerator(Callback):
     """
     Evaluation for IQA, the main function is to calculate PLCC, SROCC, RMSE and MAD after each train epoch.
     """
-    def __init__(self, val_generator, using_single_mos, evaluation_generator=None, imagenet_pretrain=False):
+    def __init__(self, val_generator, using_single_mos, evaluation_generator=None):
         super(ModelEvaluationIQGenerator, self).__init__()
         self.val_generator = val_generator
         self.evaluation_generator = evaluation_generator
         self.using_single_mos = using_single_mos
-        self.imagenet_pretrain = imagenet_pretrain
         self.mos_scales = np.array([1, 2, 3, 4, 5])
 
     def __get_prediction_mos(self, image):

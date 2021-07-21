@@ -39,7 +39,7 @@ def create_callbacks(model_name, result_folder, other_callback=None, checkpoint=
                 mcp_file = os.path.join(result_folder, '{epoch:02d}_{loss:.4f}_{val_loss:.4f}.h5')
         callbacks.append(ModelCheckpoint(mcp_file, save_best_only=True, save_weights_only=True, monitor='plcc', verbose=1, mode='max'))
 
-    tensorboard_callback = TensorBoard(log_dir=result_folder, histogram_freq=1)
-    callbacks.append(tensorboard_callback)
+    # tensorboard_callback = TensorBoard(log_dir=result_folder, histogram_freq=1)
+    # callbacks.append(tensorboard_callback)
 
     return callbacks

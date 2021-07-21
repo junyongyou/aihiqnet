@@ -14,7 +14,7 @@ class ResolutionGroupGenerator(Sequence):
     """
     Generator to supply group image data, individual dataset should go to individual group because they can have different resolutions
     """
-    def __init__(self, images_scores, batch_size=16, image_aug=False, shuffle=True, imagenet_pretrain=True, score_type='score'):
+    def __init__(self, images_scores, batch_size=16, image_aug=False, shuffle=True, imagenet_pretrain=True):
         self.images_scores = images_scores
         self.batch_size = batch_size
         self.shuffle = shuffle
@@ -23,7 +23,6 @@ class ResolutionGroupGenerator(Sequence):
             # do image augmentation by left-right flip
             self.seq = iaa.Sequential([iaa.Fliplr(0.5)])
         self.image_aug = image_aug
-        self.score_type = score_type
         self.generate_groups()
         self.on_epoch_end()
 
@@ -37,7 +36,7 @@ class ResolutionGroupGenerator(Sequence):
         """
         resolution_group = dict()
         for image_score in self.images_scores:
-            content = image_score.split(',')
+            content = image_score.split(';')
             image = Image.open(content[0])
             # score = content[1:]
             image_size = '{}_{}'.format(image.size[0], image.size[1])
@@ -80,20 +79,6 @@ class ResolutionGroupGenerator(Sequence):
                 self.resolution_index.append(resolution)
                 self.group_length.append(len(images_scores_per_resolution) // self.batch_size)
 
-            # # shuffle both group orders and image orders in each group
-            # images_scores = list(zip(self.image_file_groups, self.score_groups))
-            # random.shuffle(images_scores)
-            # self.image_file_groups, self.score_groups = zip(*images_scores)
-            #
-            # self.index_groups = []
-            # self.group_length = []
-            # for i in range(len(self.image_file_groups)):
-            #     self.index_groups.append(np.arange(len(self.image_file_groups[i])))
-            #     self.group_length.append(len(self.image_file_groups[i]) // self.batch_size)
-            #
-            # for i in range(len(self.index_groups)):
-            #     np.random.shuffle(self.index_groups[i])
-
     def __getitem__(self, item):
         lens = 0
         idx_0 = len(self.group_length) - 1
@@ -110,7 +95,7 @@ class ResolutionGroupGenerator(Sequence):
         resolution = self.resolution_index[idx_0]
         images_scores = self.resolution_groups.get(resolution)
         for idx_1 in range(item * self.batch_size, (item + 1) * self.batch_size):
-            image_score = images_scores[idx_1].split(',')
+            image_score = images_scores[idx_1].split(';')
             image = np.asarray(Image.open(image_score[0]), dtype=np.float32)
             if self.imagenet_pretrain:
                 # ImageNet normalization
@@ -126,12 +111,11 @@ class ResolutionGroupGenerator(Sequence):
                 image[:, :, 2] /= 54.9486100975773
             images.append(image)
 
-            if self.score_type == 'score':
-                score = [float(s) for s in image_score[1:]]
-            elif self.score_type == 'category':
-                score = [float(s) for s in image_score[2:]]
+            if ',' in image_score[1]:
+                split_score = image_score[1].replace('[', '').replace(']', '').split(',')
+                score = [float(s) for s in split_score]
             else:
-                score = None
+                score = float(image_score[1])
             y_scores.append(score)
 
         if self.image_aug:
@@ -139,4 +123,3 @@ class ResolutionGroupGenerator(Sequence):
             return np.array(images_aug), np.array(y_scores)
         else:
             return np.array(images), np.array(y_scores)
-
