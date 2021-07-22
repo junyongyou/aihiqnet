@@ -355,8 +355,8 @@ def decode_predictions(preds, top=5):
     return imagenet_utils.decode_predictions(preds, top=top)
 
 
-preprocess_input.__doc__ = imagenet_utils.PREPROCESS_INPUT_DOC.format(
-    mode='', ret=imagenet_utils.PREPROCESS_INPUT_RET_DOC_TORCH)
+# preprocess_input.__doc__ = imagenet_utils.PREPROCESS_INPUT_DOC.format(
+#     mode='', ret=imagenet_utils.PREPROCESS_INPUT_RET_DOC_TORCH)
 decode_predictions.__doc__ = imagenet_utils.decode_predictions.__doc__
 
 DOC = """

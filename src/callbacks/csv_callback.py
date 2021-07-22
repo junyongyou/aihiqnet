@@ -2,6 +2,7 @@ import collections
 import csv
 import io
 from tensorflow.python.lib.io import file_io
+from tensorflow.python.platform import gfile
 
 import numpy as np
 import six
@@ -19,20 +20,31 @@ class MyCSVLogger(CSVLogger):
         self.model_name = model_name
         super(MyCSVLogger, self).__init__(filename, separator, append)
 
+    def set_base_fine(self, type):
+        self.info = type
+
     def on_train_begin(self, logs=None):
         if self.append:
-            if file_io.file_exists(self.filename):
-                with open(self.filename, 'r' + self.file_flags) as f:
+            if file_io.file_exists_v2(self.filename):
+                with gfile.GFile(self.filename, 'r') as f:
                     self.append_header = not bool(len(f.readline()))
             mode = 'a'
         else:
             mode = 'w'
-        self.csv_file = io.open(self.filename,
-                                mode + self.file_flags,
-                                **self._open_args)
+        self.csv_file = gfile.GFile(self.filename, mode)
+        # if self.append:
+        #     if file_io.file_exists(self.filename):
+        #         with open(self.filename, 'r' + self.file_flags) as f:
+        #             self.append_header = not bool(len(f.readline()))
+        #     mode = 'a'
+        # else:
+        #     mode = 'w'
+        # self.csv_file = io.open(self.filename,
+        #                         mode + self.file_flags,
+        #                         **self._open_args)
         if self.model_name:
             self.csv_file.write('\nModel name: {}\n'.format(self.model_name))
-        self.csv_file.write('\nTrain start: {}\n'.format(datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
+        self.csv_file.write('\n{} for train start: {}\n'.format(self.info, datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")))
         self.csv_file.flush()
 
     def on_epoch_end(self, epoch, logs=None):
