@@ -16,6 +16,8 @@ from image_quality.model_evaluation.model_evaluation import ModelEvaluation
 
 def identify_best_weights(result_folder, history, best_plcc):
     pos = np.where(history['plcc'] == best_plcc)[0][0]
+    if len(pos) == 0:
+        return None
 
     pos_loss = '{}_{:.4f}'.format(pos + 1, history['loss'][pos])
     all_weights_files = glob.glob(os.path.join(result_folder, '*.h5'))
