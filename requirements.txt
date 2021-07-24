@@ -1,4 +1,5 @@
 tensorflow-gpu~=2.2.0
+# tf-nightly-gpu=2.6.0
 numpy~=1.17.0
 six~=1.12.0
 scipy~=1.4.1

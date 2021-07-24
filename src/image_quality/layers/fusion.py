@@ -1,5 +1,5 @@
 """
-Reference: Feature pyramid networks for object detection, CVPR'17.
+Reference: Feature pyramid networks for object detection.
 """
 from tensorflow.keras.layers import Conv2D, Add
 from image_quality.layers.upsample import Upsample

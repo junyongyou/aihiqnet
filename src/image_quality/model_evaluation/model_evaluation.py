@@ -46,7 +46,7 @@ class ModelEvaluation:
             content = image_file_score.split(';')
             image_file = content[0]
             if self.using_single_mos:
-                score = float(content[1])
+                score = float(content[-1])
             else:
                 split_score = content[1].replace('[', '').replace(']', '').split(',')
                 score_distribution = [float(s) for s in split_score]

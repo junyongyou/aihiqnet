@@ -42,7 +42,6 @@ def get_image_list_path(image_folder, image_score_list, n_quality_levels, do_nor
             if n_quality_levels > 1:
                 scores_softmax = np.array([float(score) for score in content[1: 6]])
                 score = [score_softmax / scores_softmax.sum() for score_softmax in scores_softmax]
-
             else:
                 score = float(content[-1])
         else:
@@ -257,6 +256,7 @@ def train_main(args):
                                   )
 
         best_weights_file_finetune = identify_best_weights(result_folder, finetune_model_history.history, callbacks[3].best)
-        remove_non_best_weights(result_folder, [best_weights_file, best_weights_file_finetune])
-        evaluation_testset.__evaluation__(best_weights_file_finetune, test_images_scores, evaluation_name='testset_finetune',
-                                          result_folder=result_folder, draw_scatter=True)
+        if best_weights_file_finetune:
+            remove_non_best_weights(result_folder, [best_weights_file, best_weights_file_finetune])
+            evaluation_testset.__evaluation__(best_weights_file_finetune, test_images_scores, evaluation_name='testset_finetune',
+                                              result_folder=result_folder, draw_scatter=True)
