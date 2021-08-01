@@ -16,14 +16,12 @@ Please define the image_score file in the followig formats:
     
 
    For database with MOS values only, the MOS file is like this (SPAQ format):    
-    
-    ```
+        
         image path, MOS or Z-score
         image1.jpg;3.828571429
         image2.jpg;3.479166667
         image3.jpg;2,3.78125
         image4.jpg;3.926605505
-    ```
     
    For database with MOS values only, the MOS file is like this (SPAQ format):
     ```
