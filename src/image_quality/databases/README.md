@@ -20,11 +20,11 @@ Please define the image_score file in the followig formats:
     For database with MOS values only, the MOS file is like this (SPAQ format):    
     
     ```
-        image path, voter number of quality scale 1, voter number of quality scale 2, voter number of quality scale 3, voter number of quality scale 4, voter number of quality scale 5, MOS or Z-score
-        image1.jpg;0,0,25,73,7,3.828571429
-        image2.jpg;0,3,45,47,1,3.479166667
-        image3.jpg;1,0,20,73,2,3.78125
-        image4.jpg;0,0,21,75,13,3.926605505
+        image path, MOS or Z-score
+        image1.jpg;3.828571429
+        image2.jpg;3.479166667
+        image3.jpg;2,3.78125
+        image4.jpg;3.926605505
     ```
     
    For database with MOS values only, the MOS file is like this (SPAQ format):
