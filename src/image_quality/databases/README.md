@@ -6,7 +6,8 @@ This work uses two publicly available databases: KonIQ-10k [KonIQ-10k: An ecolog
 The koniq10k_images_scores.csv and image_mos_spaq.csv list all the image names and MOS values (for KonIQ-10k: distribution and MOS in [1, 5]; for SPAQ: MOS in [0, 100]), which were randomly chosen from the two databases in terms of SI (spatial perceptual information) and MOS.
 
 Please define the image_score file in the followig formats:
-    For database with score distribution available, the MOS file is like this :
+    For database with score distribution available, the MOS file is like this:    
+    
     ```
         image path, voter number of quality scale 1, voter number of quality scale 2, voter number of quality scale 3, voter number of quality scale 4, voter number of quality scale 5, MOS or Z-score
         image1.jpg;0,0,25,73,7,3.828571429
@@ -15,7 +16,7 @@ Please define the image_score file in the followig formats:
         image4.jpg;0,0,21,75,13,3.926605505
     ```
 
-    For database with MOS values only, the MOS file is like this (SPAQ format):
+   For database with MOS values only, the MOS file is like this (SPAQ format):
     ```
         image path, MOS or Z-score
         image1.jpg;3.828571429
