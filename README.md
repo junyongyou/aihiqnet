@@ -1,4 +1,4 @@
-# PHIQnet Implementation
+# AIHIQnet Implementation
 
 TF-Keras implementation of PHIQnet as described in [Attention Integrated Hierarchical Networks for No-Reference Image Quality Assessment] by Junyong You and Jari Korhonen.
 
