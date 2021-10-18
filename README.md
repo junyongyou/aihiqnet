@@ -1,6 +1,6 @@
 # AIHIQnet Implementation
 
-TF-Keras implementation of PHIQnet as described in [Attention Integrated Hierarchical Networks for No-Reference Image Quality Assessment] by Junyong You and Jari Korhonen.
+TF-Keras implementation of AIHIQnet as described in [Attention Integrated Hierarchical Networks for No-Reference Image Quality Assessment] by Junyong You and Jari Korhonen.
 
 ## Installation
 
@@ -9,7 +9,7 @@ TF-Keras implementation of PHIQnet as described in [Attention Integrated Hierarc
 3) The models have actually been trained on RTX3090 by tf-nightly-gpu (version 2.6), and the latest version of code can be run under both TF2.2 and TF-nightly. The guidance (https://www.reddit.com/r/tensorflow/comments/jsalkw/rtx_3090_and_tensorflow_for_windows_10_step_by/) was followed to install TF on RTX3090, and other packages should also be updated.
 
 ## Training a model
-Examples of training PHIQnet on KonIQ-10k and SPAQ databases can be found in image_quality/bin.
+Examples of training AIHIQnet on KonIQ-10k and SPAQ databases can be found in image_quality/bin.
 Argparser should be used, but the authors prefer to use dictionary with parameters being defined. It is easy to convert to take arguments.
 In principle, the following parameters can be defined:
 
