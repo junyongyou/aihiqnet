@@ -1,6 +1,6 @@
 # AIHIQnet Implementation
 
-TF-Keras implementation of AIHIQnet as described in [Attention Integrated Hierarchical Networks for No-Reference Image Quality Assessment] by Junyong You and Jari Korhonen.
+TF-Keras implementation of AIHIQnet as described in [Attention Integrated Hierarchical Networks for No-Reference Image Quality Assessment](https://www.sciencedirect.com/science/article/pii/S1047320321002674#s0030) by Junyong You and Jari Korhonen.
 
 ## Installation
 
