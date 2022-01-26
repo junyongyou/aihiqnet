@@ -1,4 +1,4 @@
-# Databases for training PHIQnet
+# Databases for training AIHIQnet
 
 This work uses two publicly available databases: KonIQ-10k [KonIQ-10k: An ecologically valid database for deep learning of blind image quality assessment](https://ieeexplore.ieee.org/document/8968750) by V. Hosu, H. Lin, T. Sziranyi, and D. Saupe;
  and SPAQ [Perceptual quality assessment of smartphone photography](https://openaccess.thecvf.com/content_CVPR_2020/html/Fang_Perceptual_Quality_Assessment_of_Smartphone_Photography_CVPR_2020_paper.html) by Y. Fang, H. Zhu, Y. Zeng, K. Ma, and Z. Wang.
